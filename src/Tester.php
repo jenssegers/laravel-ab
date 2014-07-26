@@ -233,6 +233,10 @@ class Tester {
 
         $this->session->set('experiment', $experiment->name);
 
+        // Since there is an ongoing experiment, increase the pageviews.
+        // This will only be incremented once during the whole experiment.
+        $this->pageview();
+
         return $experiment->name;
     }
 

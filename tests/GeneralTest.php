@@ -42,7 +42,17 @@ class GeneralTest extends TestCase {
         $this->assertEquals(3, Experiment::count());
     }
 
-    public function testExperiment()
+    public function testNewExperiment()
+    {
+        $ab = App::make('ab');
+        $experiment = $ab->experiment();
+
+        $this->assertEquals('a', $experiment);
+        $this->assertEquals($experiment, $ab->getSession()->get('experiment'));
+        $this->assertEquals(1, Experiment::find('a')->visitors);
+    }
+
+    public function testExistingExperiment()
     {
         $session = Mockery::mock('Jenssegers\AB\Session\SessionInterface');
         $session->shouldReceive('get')->with('experiment')->andReturn('a');
