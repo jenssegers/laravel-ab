@@ -12,11 +12,11 @@ class CookieSession implements SessionInterface {
     protected $cookieName = 'ab';
 
     /**
-     * A copy of the cookie data.
+     * A copy of the session data.
      *
      * @var array
      */
-    protected $cookieData = null;
+    protected $data = null;
 
     /**
      * Cookie lifetime.
@@ -30,7 +30,7 @@ class CookieSession implements SessionInterface {
      */
     public function __construct()
     {
-        $this->cookieData = Cookie::get($this->cookieName, []);
+        $this->data = Cookie::get($this->cookieName, []);
     }
 
     /**
@@ -38,7 +38,7 @@ class CookieSession implements SessionInterface {
      */
     public function get($name, $default = null)
     {
-        return array_get($this->cookieData, $name, $default);
+        return array_get($this->data, $name, $default);
     }
 
     /**
@@ -46,9 +46,9 @@ class CookieSession implements SessionInterface {
      */
     public function set($name, $value)
     {
-        $this->cookieData[$name] = $value;
+        $this->data[$name] = $value;
 
-        return Cookie::queue($this->cookieName, $this->cookieData, $this->minutes);
+        return Cookie::queue($this->cookieName, $this->data, $this->minutes);
     }
 
     /**
@@ -56,7 +56,7 @@ class CookieSession implements SessionInterface {
      */
     public function clear()
     {
-        $this->cookieData = [];
+        $this->data = [];
 
         return Cookie::forget($this->cookieName);
     }

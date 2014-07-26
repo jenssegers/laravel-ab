@@ -5,18 +5,33 @@ use Illuminate\Support\Facades\Session;
 class LaravelSession implements SessionInterface {
 
     /**
-     * Session key prefix.
+     * The session key.
      *
      * @var string
      */
-    protected $prefix = 'ab.';
+    protected $sessionName = 'ab';
+
+    /**
+     * A copy of the session data.
+     *
+     * @var array
+     */
+    protected $data = null;
+
+    /**
+     * Constructor.
+     */
+    public function __construct()
+    {
+        $this->data = Session::get($this->sessionName, []);
+    }
 
     /**
      * {@inheritdoc}
      */
     public function get($name, $default = null)
     {
-        return Session::get($this->prefix . $name, $default);
+        return array_get($this->data, $name, $default);
     }
 
     /**
@@ -24,7 +39,9 @@ class LaravelSession implements SessionInterface {
      */
     public function set($name, $value)
     {
-        return Session::set($this->prefix . $name, $value);
+        $this->data[$name] = $value;
+
+        return Session::set($this->sessionName, $this->data);
     }
 
     /**
@@ -32,7 +49,9 @@ class LaravelSession implements SessionInterface {
      */
     public function clear()
     {
-        return Session::clear();
+        $this->data = [];
+
+        return Session::forget($this->sessionName);
     }
 
 }

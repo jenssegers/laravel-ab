@@ -14,9 +14,7 @@ class SessionTest extends TestCase {
 
         $this->assertEquals('bar', $session->get('foo'));
         $this->assertEquals(1, $session->get('bar'));
-
-        $this->assertEquals('bar', Session::get('ab.foo'));
-        $this->assertEquals(1, Session::get('ab.bar'));
+        $this->assertEquals(array('foo'=>'bar','bar'=>1) , Session::get('ab'));
     }
 
     public function testCookieSession()
