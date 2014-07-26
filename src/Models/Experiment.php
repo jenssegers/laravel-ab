@@ -1,15 +1,15 @@
 <?php namespace Jenssegers\AB\Models;
 
-use Config;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Database\Eloquent\Model as Eloquent;
 
-class Goal extends Eloquent {
+class Experiment extends Eloquent {
 
     protected $primaryKey = 'name';
 
     public $timestamps = false;
 
-    protected $fillable = ['name', 'experiment', 'count'];
+    protected $fillable = ['name', 'visitors', 'engagement'];
 
     public function __construct(array $attributes = array())
     {
@@ -19,9 +19,14 @@ class Goal extends Eloquent {
         $this->connection = Config::get('ab::connection');
     }
 
+    public function goals()
+    {
+        return $this->hasMany('Jenssegers\AB\Models\Goal', 'experiment');
+    }
+
     public function scopeActive($query)
     {
-        return $query->whereIn('experiment', Config::get('ab::experiments'));
+        return $query->whereIn('name', Config::get('ab::experiments'));
     }
 
 }

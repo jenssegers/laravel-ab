@@ -67,6 +67,12 @@ class InstallCommand extends Command {
             });
         }
 
+        // Add experiments.
+        foreach (Config::get('ab::experiments') as $experiment)
+        {
+            Experiment::firstOrCreate(['name' => $experiment]);
+        }
+
         $this->info('A/B testing installed.');
     }
 

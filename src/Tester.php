@@ -1,37 +1,60 @@
 <?php namespace Jenssegers\AB;
 
-use Config;
-use Session;
-use URL;
-use Route;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 
+use Jenssegers\AB\Session\SessionInterface;
 use Jenssegers\AB\Models\Experiment;
 use Jenssegers\AB\Models\Goal;
 
 class Tester {
 
     /**
+     * The Session instance.
+     *
+     * @var SessionInterface
+     */
+    protected $session;
+
+    /**
+     * Constructor.
+     *
+     * @param SessionInterface $session
+     */
+    public function __construct(SessionInterface $session)
+    {
+        $this->session = $session;
+    }
+
+    /**
      * Track clicked links and form submissions.
      *
+     * @param  Request $request
      * @return void
      */
-    public function track()
+    public function track(Request $request)
     {
         // Don't track if there is no active experiment.
-        if ( ! Session::get('ab.experiment')) return;
+        if ( ! $this->session->get('experiment')) return;
+
+        // Since there is an ongoing experiment, increase the pageviews.
+        // This will only be incremented once during the whole experiment.
+        $this->pageview();
 
         // Don't track first page view.
-        if (is_null(URL::getRequest()->headers->get('referer'))) return;
+        if (is_null($request->headers->get('referer'))) return;
 
         // Check current and previous urls.
-        $root = URL::to('/');
-        $from = ltrim(str_replace($root, '', URL::previous()), '/');
-        $to = ltrim(str_replace($root, '', URL::current()), '/');
+        $root = $request->root();
+        $from = ltrim(str_replace($root, '', $request->headers->get('referer')), '/');
+        $to = ltrim(str_replace($root, '', $request->getPathInfo()), '/');
 
         // Don't track refreshes.
         if ($from == $to) return;
 
-        // Trigger engagement.
+        // Because the visitor is viewing a new page, trigger engagement.
+        // This will only be incremented once during the whole experiment.
         $this->interact();
 
         $goals = $this->getGoals();
@@ -50,6 +73,43 @@ class Tester {
     }
 
     /**
+     * Get or compare the current experiment for this session.
+     *
+     * @param  string  $target
+     * @return bool|string
+     */
+    public function experiment($target = null)
+    {
+        // Get the existing or new experiment.
+        $experiment = $this->session->get('experiment') ?: $this->nextExperiment();
+
+        if (is_null($target))
+        {
+            return $experiment;
+        }
+
+        return $experiment == $target;
+    }
+
+    /**
+     * Increment the pageviews for the current experiment.
+     *
+     * @return void
+     */
+    public function pageview()
+    {
+        // Only interact once per experiment.
+        if ($this->session->get('pageview')) return;
+
+        $experiment = Experiment::firstOrNew(['name' => $this->experiment()]);
+        $experiment->visitors++;
+        $experiment->save();
+
+        // Mark current experiment as interacted.
+        $this->session->set('pageview', 1);
+    }
+
+    /**
      * Increment the engagement for the current experiment.
      *
      * @return void
@@ -57,14 +117,14 @@ class Tester {
     public function interact()
     {
         // Only interact once per experiment.
-        if (Session::get('ab.interacted')) return;
+        if ($this->session->get('interacted')) return;
 
         $experiment = Experiment::firstOrNew(['name' => $this->experiment()]);
         $experiment->engagement++;
         $experiment->save();
 
         // Mark current experiment as interacted.
-        Session::set('ab.interacted', 1);
+        $this->session->set('interacted', 1);
     }
 
     /**
@@ -75,33 +135,14 @@ class Tester {
     public function complete($name)
     {
         // Only complete once per experiment.
-        if (Session::get("ab.completed_$name")) return;
+        if ($this->session->get("completed_$name")) return;
 
         $goal = Goal::firstOrNew(['name' => $name, 'experiment' => $this->experiment()]);
         $goal->count++;
         $goal->save();
 
         // Mark current experiment as completed.
-        Session::set("ab.completed_$name", 1);
-    }
-
-    /**
-     * Get or compare the current experiment for this session.
-     *
-     * @param  string  $target
-     * @return bool|string
-     */
-    public function experiment($target = null)
-    {
-        // Get the existing or new experiment.
-        $experiment = Session::get('ab.experiment') ?: $this->nextExperiment();
-
-        if (is_null($target))
-        {
-            return $experiment;
-        }
-
-        return $experiment == $target;
+        $this->session->set("completed_$name", 1);
     }
 
     /**
@@ -122,9 +163,9 @@ class Tester {
      */
     public function setExperiment($experiment)
     {
-        if (Session::get('ab.experiment') != $experiment)
+        if ($this->session->get('experiment') != $experiment)
         {
-            Session::set('ab.experiment', $experiment);
+            $this->session->set('experiment', $experiment);
 
             // Increase pageviews for new experiment.
             $this->nextExperiment($experiment);
@@ -152,6 +193,26 @@ class Tester {
     }
 
     /**
+     * Get the session instance.
+     *
+     * @return SessionInterface
+     */
+    public function getSession()
+    {
+        return $this->session;
+    }
+
+    /**
+     * Set the session instance.
+     *
+     * @param $session SessionInterface
+     */
+    public function setSession(SessionInterface $session)
+    {
+        $this->session = $session;
+    }
+
+    /**
      * Prepare an experiment for this session.
      *
      * @return string
@@ -170,11 +231,7 @@ class Tester {
             $experiment = Experiment::active()->orderBy('visitors', 'asc')->firstOrFail();
         }
 
-        // Increase the visitors counter.
-        $experiment->visitors++;
-        $experiment->save();
-
-        Session::set('ab.experiment', $experiment->name);
+        $this->session->set('experiment', $experiment->name);
 
         return $experiment->name;
     }

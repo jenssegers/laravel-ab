@@ -1,5 +1,7 @@
 <?php namespace Jenssegers\AB;
 
+use Jenssegers\AB\Session\LaravelSession;
+use Jenssegers\AB\Session\CookieSession;
 use Jenssegers\AB\Commands\InstallCommand;
 use Jenssegers\AB\Commands\FlushCommand;
 use Jenssegers\AB\Commands\ReportCommand;
@@ -25,10 +27,10 @@ class TesterServiceProvider extends ServiceProvider {
         // Fix for PSR-4
         $this->package('jenssegers/ab', 'ab', realpath(__DIR__));
 
-        // Boot the A/B testing when routing starts.
-        $this->app->before(function()
+        // Start the A/B tracking when routing starts.
+        $this->app->before(function($request)
         {
-            $this->app['ab']->track();
+            $this->app['ab']->track($request);
         });
     }
 
@@ -41,7 +43,7 @@ class TesterServiceProvider extends ServiceProvider {
     {
         $this->app['ab'] = $this->app->share(function($app)
         {
-            return new Tester;
+            return new Tester(new CookieSession);
         });
 
         // Register artisan commands.

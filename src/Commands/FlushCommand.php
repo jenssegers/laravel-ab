@@ -45,6 +45,12 @@ class FlushCommand extends Command {
         Experiment::truncate();
         Goal::truncate();
 
+        // Add experiments.
+        foreach (Config::get('ab::experiments') as $experiment)
+        {
+            Experiment::firstOrCreate(['name' => $experiment]);
+        }
+
         $this->info('A/B testing data flushed.');
     }
 
