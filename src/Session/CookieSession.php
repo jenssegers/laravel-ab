@@ -58,7 +58,7 @@ class CookieSession implements SessionInterface {
     {
         $this->data = [];
 
-        return Cookie::forget($this->cookieName);
+        return Cookie::queue($this->cookieName, null, -2628000);
     }
 
 }
