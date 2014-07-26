@@ -35,7 +35,7 @@ Next, edit the `config/packages/jenssegers/ab/config.php` file. The following co
 
 ### Database Connection
 
-This is your Laravel database connection that is used to store the A/B testing data. By default, it will use your default connection, but here you can change it to store data in a different database.
+This is your Laravel database connection that is used to store the A/B testing data. This is handy when you want to store the A/B testing data in a different database. When empty, it will use your default database connection.
 
     'connection' => 'mysql',
 
@@ -51,7 +51,7 @@ These are your A/B experiments. These are unique identifiers that you can use in
 
 ### Goals
 
-Without goals, each experiment will track the number of visitors that saw the experiment and detect engagement. Additionally, you can define certain goals that you want to reach with your experiments. If, for example, your main goal is for your visitors to buy your product or contact you for more information and you have specific routes set up for both of these pages, your goals could look like this:
+Without goals, each experiment will track the number of visitors that saw the experiment and detect engagement. Additionally, you can define certain goals that you want to reach with your experiments. If, your main goal is for your visitors to buy your product or contact you for more information, and you have specific routes set up for both of these pages, your goals could look like this:
 
     'goals' => [
         'pricing/order',
@@ -70,7 +70,7 @@ Once you have selected your database connection, use the included install comman
 Usage
 -----
 
-After you have defined your experiments and goals, you can start designing your A/B tests. All your visitors will be given the next experiment that has the least visits. You can request the current experiment identifier with the `AB::experiment()` method. For example, if you have defined the following experiments ['a', 'b', 'c'], your view could look like this:
+After you have defined your experiments and goals, you can start designing your A/B tests. All your visitors will be given the next experiment that has the least visits. You can request the current experiment identifier with the `AB::experiment()` method. For example, if you have defined the following experiments `['a', 'b', 'c']`, your view could look like this:
 
     @if (AB::experiment('a'))
         <div class="logo-big"></div>
@@ -83,7 +83,9 @@ After you have defined your experiments and goals, you can start designing your 
 
     @endif
 
-Once the visitor is assigned to an experiment, his next clicks are automatically tracked to see if he is engaging with your website or completing certain goals. Your goals can be relative urls or named routes, when a visitor clicks that link during an experiment, it will be marked as completed for that visitor.
+Once the visitor is assigned to an experiment, his next clicks are automatically tracked to see if he is engaging with your website or completing certain goals. These goals are relative urls or named routes, and will be marked as completed when a visitor visits that url during an experiment.
+
+**NOTE**: Visitors are only tracked if you are conducting an experiment. Only when you ask the current `AB::experiment()`, it will assign an experiment to that user using the current Laraval session.
 
 ### Adding new experiments
 
