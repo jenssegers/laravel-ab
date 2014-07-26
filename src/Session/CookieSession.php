@@ -56,6 +56,8 @@ class CookieSession implements SessionInterface {
      */
     public function clear()
     {
+        $this->cookieData = [];
+
         return Cookie::forget($this->cookieName);
     }
 
