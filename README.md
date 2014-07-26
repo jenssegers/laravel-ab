@@ -3,7 +3,7 @@ Laravel 4 A/B Testing
 
 [![Build Status](http://img.shields.io/travis/jenssegers/laravel-ab.svg)](https://travis-ci.org/jenssegers/laravel-ab) [![Coverage Status](http://img.shields.io/coveralls/jenssegers/laravel-ab.svg)](https://coveralls.io/r/jenssegers/laravel-ab)
 
-A server-side A/B testing tool for Laravel. It may not have a lot of features or has the prettiest code, but it's a great free server-side A/B testing solution.
+A server-side A/B testing tool for Laravel, a great free alternative for services such as optimizely. Use A/B testing to figure out which content works, and which doesn't.
 
 This tool allows you to experiment with different variations of your website and tracks what the difference in engagement or reached goals is between them. Whenever you ask the A/B testing class for the current experiment, it will select the next experiment that has the least visits so that every experiment is tested equally. When there is an active experiment going on, it will start tracking engagement (click a different link, or submitting a form) and check if certain defined goals are reached. These goals are generally urls or routes, but can also be triggered manually.
 
@@ -87,7 +87,7 @@ After you have defined your experiments and goals, you can start designing your 
 
 Once the visitor is assigned to an experiment, his next clicks are automatically tracked to see if he is engaging with your website or completing certain goals. These goals are relative urls or named routes, and will be marked as completed when a visitor visits that url during an experiment.
 
-**NOTE**: Visitors are only tracked if you are conducting an experiment. Only when you ask the current `AB::experiment()`, it will assign an experiment to that user using the current Laraval session.
+**NOTE**: Visitors are only tracked if you are conducting an experiment. Only when you ask the current `AB::experiment()`, it will assign an experiment to that user using the current Laravel session.
 
 ### Adding new experiments
 
