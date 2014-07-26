@@ -1,6 +1,8 @@
 Laravel 4 A/B Testing
 =====================
 
+[![Build Status](http://img.shields.io/travis/jenssegers/laravel-ab.svg)](https://travis-ci.org/jenssegers/laravel-ab) [![Coverage Status](http://img.shields.io/coveralls/jenssegers/laravel-ab.svg)](https://coveralls.io/r/jenssegers/laravel-ab)
+
 A server-side A/B testing tool for Laravel. It may not have a lot of features or has the prettiest code, but it's a great free server-side A/B testing solution.
 
 This tool allows you to experiment with different variations of your website and tracks what the difference in engagement or reached goals is between them. Whenever you ask the A/B testing class for the current experiment, it will select the next experiment that has the least visits so that every experiment is tested equally. When there is an active experiment going on, it will start tracking engagement (click a different link, or submitting a form) and check if certain defined goals are reached. These goals are generally urls or routes, but can also be triggered manually.
