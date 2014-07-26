@@ -85,6 +85,14 @@ After you have defined your experiments and goals, you can start designing your 
 
 Once the visitor is assigned to an experiment, his next clicks are automatically tracked to see if he is engaging with your website or completing certain goals. Your goals can be relative urls or named routes, when a visitor clicks that link during an experiment, it will be marked as completed for that visitor.
 
+### Adding new experiments
+
+If you want to add new experiments, it may be best to clear the existing A/B testing data with this command:
+
+    php artisan ab:flush
+
+If you don't flush your existing experimental data, all new visitors will see the new experiment first until it catches up with the pageviews of the old experiments.
+
 Reports
 -------
 
