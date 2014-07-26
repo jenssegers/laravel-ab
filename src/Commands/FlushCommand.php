@@ -4,7 +4,7 @@ use Jenssegers\AB\Models\Experiment;
 use Jenssegers\AB\Models\Goal;
 
 use Config;
-use Schema;
+use DB;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
@@ -42,14 +42,12 @@ class FlushCommand extends Command {
      */
     public function fire()
     {
-        Experiment::truncate();
-        Goal::truncate();
+        $connection = Config::get('ab::connection');
 
-        // Add experiments.
-        foreach (Config::get('ab::experiments') as $experiment)
-        {
-            Experiment::firstOrCreate(['name' => $experiment]);
-        }
+        DB::connection($connection)->table('experiments')->delete();
+        DB::connection($connection)->table('goals')->delete();
+
+        $this->call('ab:install');
 
         $this->info('A/B testing data flushed.');
     }

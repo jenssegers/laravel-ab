@@ -146,17 +146,6 @@ class Tester {
     }
 
     /**
-     * Alias for experiment.
-     *
-     * @param  string  $target
-     * @return bool|string
-     */
-    public function getExperiment($target = null)
-    {
-        return $this->experiment($target);
-    }
-
-    /**
      * Set the current experiment for this session manually.
      *
      * @param string $experiment

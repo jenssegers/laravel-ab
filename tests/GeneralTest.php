@@ -36,6 +36,8 @@ class GeneralTest extends TestCase {
 
     public function testAutoCreateExperiments()
     {
+        DB::table('experiments')->delete();
+
         $ab = App::make('ab');
         $ab->experiment();
 
@@ -62,6 +64,16 @@ class GeneralTest extends TestCase {
 
         $this->assertEquals('a', $experiment);
         $this->assertEquals($experiment, $ab->getSession()->get('experiment'));
+    }
+
+    public function testExperimentCompare()
+    {
+        $ab = App::make('ab');
+        $experiment = $ab->experiment();
+
+        $this->assertEquals('a', $experiment);
+        $this->assertTrue($ab->experiment('a'));
+        $this->assertFalse($ab->experiment('b'));
     }
 
     public function testPageview()
@@ -153,6 +165,16 @@ class GeneralTest extends TestCase {
         $this->assertEquals(1, Experiment::find('a')->visitors);
         $this->assertEquals(1, Experiment::find('a')->engagement);
         $this->assertEquals(1, Goal::where('name', 'buy')->where('experiment', 'a')->first()->count);
+    }
+
+    public function testSetSession()
+    {
+        $session = Mockery::mock('Jenssegers\AB\Session\SessionInterface');
+
+        $ab = App::make('ab');
+        $ab->setSession($session);
+
+        $this->assertEquals($session, $ab->getSession());
     }
 
 }

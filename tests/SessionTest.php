@@ -14,7 +14,10 @@ class SessionTest extends TestCase {
 
         $this->assertEquals('bar', $session->get('foo'));
         $this->assertEquals(1, $session->get('bar'));
-        $this->assertEquals(array('foo'=>'bar','bar'=>1) , Session::get('ab'));
+        $this->assertEquals(array('foo'=>'bar','bar'=>1), Session::get('ab'));
+
+        $session->clear();
+        $this->assertEquals(null, Session::get('ab'));
     }
 
     public function testCookieSession()
@@ -22,6 +25,7 @@ class SessionTest extends TestCase {
         Cookie::shouldReceive('make')->passthru();
         Cookie::shouldReceive('queue')->with('ab', array('foo'=>'bar'), 60)->once()->passthru();
         Cookie::shouldReceive('queue')->with('ab', array('foo'=>'bar','bar'=>1), 60)->once()->passthru();
+        Cookie::shouldReceive('queue')->with('ab', "", -2628000)->once()->passthru();
 
         $session = new CookieSession;
         $session->set('foo', 'bar');
@@ -29,6 +33,9 @@ class SessionTest extends TestCase {
 
         $this->assertEquals('bar', $session->get('foo'));
         $this->assertEquals(1, $session->get('bar'));
+
+        $session->clear();
+        $this->assertEquals(null, Cookie::get('ab'));
     }
 
 }
