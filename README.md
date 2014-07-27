@@ -123,11 +123,11 @@ If you run that command without a filepath, it will write it to the console.
 Advanced
 --------
 
-***AB::pageview()**
+**AB::pageview()**
 
 Used to manually trigger an pageview.
 
-***AB::interact()**
+**AB::interact()**
 
 Used to manually trigger an interaction which results in engagement.
 
