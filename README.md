@@ -69,6 +69,8 @@ Once you have selected your database connection, use the included install comman
 
     php artisan ab:install
 
+The database structure is small and lightweight, so it will not impact your application.
+
 Usage
 -----
 

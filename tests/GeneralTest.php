@@ -34,6 +34,18 @@ class GeneralTest extends TestCase {
         $this->assertInstanceOf('Jenssegers\AB\Session\SessionInterface', $ab->getSession());
     }
 
+    public function testTracking()
+    {
+        Route::enableFilters();
+        $request = Request::instance();
+
+        $ab = Mockery::mock('Jenssegers\AB\Tester');
+        $ab->shouldReceive('track')->with($request)->once();
+
+        $this->app['ab'] = $ab;
+        $this->app->events->fire('router.before', [$request]);
+    }
+
     public function testAutoCreateExperiments()
     {
         DB::table('experiments')->delete();
@@ -157,6 +169,28 @@ class GeneralTest extends TestCase {
         $headers = Request::instance()->server->getHeaders();
         $headers['HTTP_REFERER'] = 'http://localhost';
         $request = Request::create('http://localhost/buy', 'get', [], [], [], $headers);
+
+        $ab = App::make('ab');
+        $ab->experiment();
+        $ab->track($request);
+
+        $this->assertEquals(1, Experiment::find('a')->visitors);
+        $this->assertEquals(1, Experiment::find('a')->engagement);
+        $this->assertEquals(1, Goal::where('name', 'buy')->where('experiment', 'a')->first()->count);
+    }
+
+    public function testTrackRouteGoal()
+    {
+        // Register fake named route
+        Route::any('/foobar', ['as' => 'buy', function()
+        {
+            return 'hello world';
+        }]);
+
+        $headers = Request::instance()->server->getHeaders();
+        $headers['HTTP_REFERER'] = 'http://localhost';
+        $request = Request::create('http://localhost/foobar', 'get', [], [], [], $headers);
+        Route::dispatch($request);
 
         $ab = App::make('ab');
         $ab->experiment();
