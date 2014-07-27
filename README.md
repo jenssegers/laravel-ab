@@ -114,13 +114,31 @@ This will generate a simple output containing the results for each experiment an
     |          c |  173,073 |  5.0 % (8,653) | 1.0 % (1,730) | 1.3 % (5,538) | 3.2 % (5,538) |
     +------------+----------+----------------+---------------+---------------+---------------+
 
+You can also export these reports to .csv format using this command:
+
+    php artisan ab:export /path/to/file.csv
+
+If you run that command without a filepath, it will write it to the console.
+
 Advanced
 --------
 
-### AB::complete($goal)
+***AB::pageview()**
+
+Used to manually trigger an pageview.
+
+***AB::interact()**
+
+Used to manually trigger an interaction which results in engagement.
+
+**AB::complete($goal)**
 
 Used to manually trigger goals. Useful when you want to track goals that are not linked to urls or routes.
 
-### AB::interact()
+**AB::getExperiments()**
 
-Used to manually trigger an interaction which results in engagement.
+Get the list of experiments.
+
+**AB::getGoals()**
+
+Get the list of goals.

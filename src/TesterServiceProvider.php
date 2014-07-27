@@ -2,9 +2,6 @@
 
 use Jenssegers\AB\Session\LaravelSession;
 use Jenssegers\AB\Session\CookieSession;
-use Jenssegers\AB\Commands\InstallCommand;
-use Jenssegers\AB\Commands\FlushCommand;
-use Jenssegers\AB\Commands\ReportCommand;
 
 use Illuminate\Support\ServiceProvider;
 
@@ -46,11 +43,33 @@ class TesterServiceProvider extends ServiceProvider {
             return new Tester(new CookieSession);
         });
 
+        $this->registerCommands();
+    }
+
+    /**
+     * Register Artisan commands.
+     *
+     * @return void
+     */
+    protected function registerCommands()
+    {
+        // Available commands.
+        $commands = ['install', 'flush', 'report', 'export'];
+
+        // Bind the command objects.
+        foreach ($commands as &$command)
+        {
+            $class = 'Jenssegers\\AB\\Commands\\' . ucfirst($command) . 'Command';
+            $command = "ab::command.$class";
+
+            $this->app->bind($command, function($app) use ($class)
+            {
+                return new $class();
+            });
+        }
+
         // Register artisan commands.
-        $this->app['ab.commands.install'] = new InstallCommand;
-        $this->app['ab.commands.flush'] = new FlushCommand;
-        $this->app['ab.commands.report'] = new ReportCommand;
-        $this->commands('ab.commands.install', 'ab.commands.flush', 'ab.commands.report');
+        $this->commands($commands);
     }
 
 }
