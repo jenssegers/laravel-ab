@@ -67,8 +67,15 @@ class InstallCommand extends Command {
             });
         }
 
+        $experiments = Config::get('ab::experiments');
+
+        if ( ! $experiments or empty($experiments))
+        {
+            return $this->error('No experiments configured.');
+        }
+
         // Add experiments.
-        foreach (Config::get('ab::experiments') as $experiment)
+        foreach ($experiments as $experiment)
         {
             Experiment::firstOrCreate(['name' => $experiment]);
         }
