@@ -211,4 +211,45 @@ class GeneralTest extends TestCase {
         $this->assertEquals($session, $ab->getSession());
     }
 
+    public function testGoalWithoutReferer()
+    {
+        // Register fake named route
+        Route::any('/foobar', ['as' => 'buy', function()
+        {
+            return 'hello world';
+        }]);
+
+        $headers = Request::instance()->server->getHeaders();
+        $request = Request::create('http://localhost/foobar', 'get', [], [], [], $headers);
+        Route::dispatch($request);
+
+        $ab = App::make('ab');
+        $ab->experiment();
+        $ab->track($request);
+
+        $this->assertEquals(1, Experiment::find('a')->visitors);
+        $this->assertEquals(1, Experiment::find('a')->engagement);
+        $this->assertEquals(1, Goal::where('name', 'buy')->where('experiment', 'a')->first()->count);
+    }
+
+    public function testFirstPageView()
+    {
+        // Register fake named route
+        Route::any('/foobar', function()
+        {
+            return 'hello world';
+        });
+
+        $headers = Request::instance()->server->getHeaders();
+        $request = Request::create('http://localhost/foobar', 'get', [], [], [], $headers);
+        Route::dispatch($request);
+
+        $ab = App::make('ab');
+        $ab->track($request);
+        $ab->experiment();
+
+        $this->assertEquals(1, Experiment::find('a')->visitors);
+        $this->assertEquals(0, Experiment::find('a')->engagement);
+    }
+
 }

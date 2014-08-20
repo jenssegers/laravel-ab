@@ -42,9 +42,6 @@ class Tester {
         // This will only be incremented once during the whole experiment.
         $this->pageview();
 
-        // Don't track first page view.
-        if (is_null($request->headers->get('referer'))) return;
-
         // Check current and previous urls.
         $root = $request->root();
         $from = ltrim(str_replace($root, '', $request->headers->get('referer')), '/');
