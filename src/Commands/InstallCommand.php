@@ -67,6 +67,8 @@ class InstallCommand extends Command {
             });
         }
 
+        $this->info('Database schema initialized.');
+
         $experiments = Config::get('ab::experiments');
 
         if ( ! $experiments or empty($experiments))
@@ -80,7 +82,7 @@ class InstallCommand extends Command {
             Experiment::firstOrCreate(['name' => $experiment]);
         }
 
-        $this->info('A/B testing installed.');
+        $this->info('Added ' . count($experiments) . ' experiments');
     }
 
     /**
