@@ -26,7 +26,12 @@ class Experiment extends Eloquent {
 
     public function scopeActive($query)
     {
-        return $query->whereIn('name', Config::get('ab::experiments'));
+        if ($experiments = Config::get('ab::experiments'))
+        {
+            return $query->whereIn('name', Config::get('ab::experiments'));
+        }
+
+        return $query;
     }
 
 }
