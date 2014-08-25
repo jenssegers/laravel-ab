@@ -82,7 +82,7 @@ class InstallCommand extends Command {
             Experiment::firstOrCreate(['name' => $experiment]);
         }
 
-        $this->info('Added ' . count($experiments) . ' experiments');
+        $this->info('Added ' . count($experiments) . ' experiments.');
     }
 
     /**
