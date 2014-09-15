@@ -3,10 +3,10 @@
 use Jenssegers\AB\Models\Experiment;
 use Jenssegers\AB\Models\Goal;
 
-use Console_Table;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Helper\Table;
 
 class ReportCommand extends Command {
 
@@ -46,7 +46,7 @@ class ReportCommand extends Command {
 
         $columns = array_merge(['Experiment', 'Visitors', 'Engagement'], array_map('ucfirst', $goals));
 
-        $table = new Console_Table(CONSOLE_TABLE_ALIGN_RIGHT);
+        $table = new Table($this->output);
         $table->setHeaders($columns);
 
         foreach ($experiments as $experiment)
@@ -72,7 +72,7 @@ class ReportCommand extends Command {
             $table->addRow($row);
         }
 
-        $this->line($table->getTable());
+        $table->render();
     }
 
     /**
