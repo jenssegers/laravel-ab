@@ -134,9 +134,8 @@ class Tester {
         // Only complete once per experiment.
         if ($this->session->get("completed_$name")) return;
 
-        $goal = Goal::firstOrNew(['name' => $name, 'experiment' => $this->experiment()]);
-        $goal->count++;
-        $goal->save();
+        $goal = Goal::firstOrCreate(['name' => $name, 'experiment' => $this->experiment()]);
+        Goal::where('name', $name)->where('experiment', $this->experiment())->update(['count' => ($goal->count + 1)]);
 
         // Mark current experiment as completed.
         $this->session->set("completed_$name", 1);
