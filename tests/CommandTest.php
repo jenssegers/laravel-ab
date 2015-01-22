@@ -20,13 +20,14 @@ class CommandTest extends TestCase {
     {
         Artisan::call('ab:install');
 
-        Experiment::create(['name'=>'z', 'visitors'=>1, 'engagement'=>1]);
-        Goal::create(['name'=>'foo', 'experiment'=>'z', 'count'=>1]);
+        Experiment::find('a')->update(['visitors' => 153, 'engagement' => 35]);
 
         Artisan::call('ab:flush');
 
-        $this->assertEquals(3, Experiment::count());
-        $this->assertEquals(0, Goal::count());
+        $experiment = Experiment::find('a');
+
+        $this->assertEquals(0, $experiment->visitors);
+        $this->assertEquals(0, $experiment->engagement);
     }
 
     public function testReport()
