@@ -76,7 +76,6 @@ class InstallCommand extends Command {
             return $this->error('No experiments configured.');
         }
 
-        // Get goals
         $goals = Config::get('ab::goals');
 
         if ( ! $goals or empty($goals))
@@ -84,12 +83,11 @@ class InstallCommand extends Command {
             return $this->error('No goals configured.');
         }
 
-        // Add experiments and goals.
+        // Populate experiments and goals.
         foreach ($experiments as $experiment)
         {
             Experiment::firstOrCreate(['name' => $experiment]);
 
-            // Add experiments.
             foreach ($goals as $goal)
             {
                 Goal::firstOrCreate(['name' => $goal, 'experiment' => $experiment]);
