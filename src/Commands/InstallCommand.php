@@ -83,6 +83,23 @@ class InstallCommand extends Command {
         }
 
         $this->info('Added ' . count($experiments) . ' experiments.');
+
+		// Add goals
+		$goals = Config::get('ab::goals');
+
+		if ( ! $goals or empty($goals))
+		{
+			return $this->error('No goals configured.');
+		}
+
+		// Add experiments.
+		foreach ($goals as $goal)
+		{
+			Goal::firstOrCreate(['name' => $goal]);
+		}
+
+		$this->info('Added ' . count($goals) . ' goals.');
+
     }
 
     /**
