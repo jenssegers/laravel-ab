@@ -49,7 +49,6 @@ class ExportCommand extends Command {
         $columns = array_merge(['Experiment', 'Visitors', 'Engagement'], array_map('ucfirst', $goals));
 
         $writer = new Writer(new SplTempFileObject);
-        $writer->setEncoding("utf-8");
         $writer->insertOne($columns);
 
         foreach ($experiments as $experiment)
