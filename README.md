@@ -1,5 +1,5 @@
-Laravel 4 A/B Testing
-=====================
+Laravel A/B Testing
+===================
 
 [![Build Status](http://img.shields.io/travis/jenssegers/laravel-ab.svg)](https://travis-ci.org/jenssegers/laravel-ab) [![Coverage Status](http://img.shields.io/coveralls/jenssegers/laravel-ab.svg)](https://coveralls.io/r/jenssegers/laravel-ab)
 
