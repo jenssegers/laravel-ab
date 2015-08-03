@@ -1,15 +1,11 @@
-Laravel A/B Testing
-===================
-
-Edit by Rafel Sansó.
+Laravel 4 A/B Testing
+=====================
 
 [![Build Status](http://img.shields.io/travis/jenssegers/laravel-ab.svg)](https://travis-ci.org/jenssegers/laravel-ab) [![Coverage Status](http://img.shields.io/coveralls/jenssegers/laravel-ab.svg)](https://coveralls.io/r/jenssegers/laravel-ab)
 
 A server-side A/B testing tool for Laravel, a great free alternative for services such as optimizely. Use A/B testing to figure out which content works, and which doesn't.
 
 This tool allows you to experiment with different variations of your website and tracks what the difference in engagement or reached goals is between them. Whenever you ask the A/B testing class for the current experiment, it will select the next experiment that has the least visits so that every experiment is tested equally. When there is an active experiment going on, it will start tracking engagement (click a different link, or submitting a form) and check if certain defined goals are reached. These goals are generally urls or routes, but can also be triggered manually.
-
-This versión is an adaptation for Laravel 5 from original plugin, developed by @jenssegers.
 
 Installation
 ------------

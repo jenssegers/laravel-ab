@@ -78,14 +78,20 @@ class Tester {
     public function experiment($target = null)
     {
         // Get the existing or new experiment.
-        $experiment = $this->session->get('experiment') ?: $this->nextExperiment();
+        try {
+            $experiment = $this->session->get('experiment') ?: $this->nextExperiment();
 
-        if (is_null($target))
-        {
-            return $experiment;
+            if (is_null($target))
+            {
+                return $experiment;
+            }
+    
+            return $experiment == $target;
+        } catch (\Exception $e) {
+            \Log::error('Experiments on front may be deleted');
+            return false;
         }
-
-        return $experiment == $target;
+        
     }
 
     /**

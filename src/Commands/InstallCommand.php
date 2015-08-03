@@ -69,14 +69,14 @@ class InstallCommand extends Command {
 
         $this->info('Database schema initialized.');
 
-        $experiments = Config::get('ab::experiments');
+        $experiments = Config::get('ab')['experiments'];
 
         if ( ! $experiments or empty($experiments))
         {
             return $this->error('No experiments configured.');
         }
 
-        $goals = Config::get('ab::goals');
+        $goals = Config::get('ab')['goals'];
 
         if ( ! $goals or empty($goals))
         {

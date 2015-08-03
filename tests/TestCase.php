@@ -31,7 +31,7 @@ class TestCase extends Orchestra\Testbench\TestCase {
     public function tearDown()
     {
         Mockery::close();
-        $this->app['session']->flush();
+        $this->flushSession();
     }
 
 }
