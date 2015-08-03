@@ -1,5 +1,7 @@
 <?php
 
+use Jenssegers\AB\Support\Helpers;
+
 class TestCase extends Orchestra\Testbench\TestCase {
 
     protected function getPackageProviders()

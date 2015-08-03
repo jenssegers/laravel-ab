@@ -1,7 +1,6 @@
 <?php namespace Jenssegers\AB;
 
 use Jenssegers\AB\Support\Helpers;
-use Illuminate\Foundation\Application;
 use Jenssegers\AB\Session\LaravelSession;
 use Jenssegers\AB\Session\CookieSession;
 
@@ -92,7 +91,15 @@ class TesterServiceProvider extends ServiceProvider {
     protected function getConfig()
     {
         $config = $this->app['config'];
-        return Helpers::isLaravelVersion('4') ? $config->get('ab::*') : $config->get('ab');
+        if (Helpers::isLaravelVersion('4'))
+        {
+            return [
+                'connection'  => $config->get('ab::connection'),
+                'experiments' => $config->get('ab::experiments'),
+                'goals'       => $config->get('ab::goals'),
+            ];
+        }
+        return $config->get('ab');
     }
 
 }

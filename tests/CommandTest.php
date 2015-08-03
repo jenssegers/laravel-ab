@@ -6,6 +6,7 @@ use Jenssegers\AB\Models\Experiment;
 use Jenssegers\AB\Models\Goal;
 use Jenssegers\AB\Commands\InstallCommand;
 
+
 class CommandTest extends TestCase {
 
     public function testInstall()
