@@ -1,5 +1,6 @@
 <?php namespace Jenssegers\AB;
 
+use Jenssegers\AB\Support\Helpers;
 use Jenssegers\AB\Session\LaravelSession;
 use Jenssegers\AB\Session\CookieSession;
 
@@ -21,14 +22,24 @@ class TesterServiceProvider extends ServiceProvider {
      */
     public function boot()
     {
-        // Fix for PSR-4
-        $this->package('jenssegers/ab', 'ab', realpath(__DIR__));
-
-        // Start the A/B tracking when routing starts.
-        $this->app->before(function($request)
+        if (Helpers::isLaravelVersion('4'))
         {
-            $this->app['ab']->track($request);
-        });
+            // Fix for PSR-4
+            $this->package('jenssegers/ab', 'ab', realpath(__DIR__));
+
+            // Start the A/B tracking when routing starts.
+            $this->app->before(function($request)
+            {
+                $this->app['ab']->track($request);
+            });
+        }
+        elseif (Helpers::isLaravelVersion('5'))
+        {
+            $this->mergeConfigFrom(__DIR__ . '/config/config.php', 'ab');
+            $this->publishes([
+                __DIR__ . '/config/config.php' => config_path('ab.php'),
+            ]);
+        }
     }
 
     /**
@@ -40,7 +51,7 @@ class TesterServiceProvider extends ServiceProvider {
     {
         $this->app['ab'] = $this->app->share(function($app)
         {
-            return new Tester(new CookieSession);
+            return new Tester(new CookieSession, $this->getConfig());
         });
 
         $this->registerCommands();
@@ -70,6 +81,25 @@ class TesterServiceProvider extends ServiceProvider {
 
         // Register artisan commands.
         $this->commands($commands);
+    }
+
+    /**
+     * Get all config settings.
+     *
+     * @return array
+     */
+    protected function getConfig()
+    {
+        $config = $this->app['config'];
+        if (Helpers::isLaravelVersion('4'))
+        {
+            return [
+                'connection'  => $config->get('ab::connection'),
+                'experiments' => $config->get('ab::experiments'),
+                'goals'       => $config->get('ab::goals'),
+            ];
+        }
+        return $config->get('ab');
     }
 
 }

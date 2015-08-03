@@ -1,9 +1,9 @@
 <?php namespace Jenssegers\AB\Commands;
 
+use Jenssegers\AB\Tester;
 use Jenssegers\AB\Models\Experiment;
 use Jenssegers\AB\Models\Goal;
 
-use Config;
 use Schema;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputOption;
@@ -26,12 +26,21 @@ class InstallCommand extends Command {
     protected $description = 'Prepare the A/B testing database.';
 
     /**
+     * AB Tester.
+     *
+     * @var \Jenssegers\AB\Tester
+     */
+    protected $ab;
+
+    /**
      * Create a new command instance.
      *
+     * @param  Tester $ab
      * @return void
      */
-    public function __construct()
+    public function __construct(Tester $ab = null)
     {
+        $this->ab = is_null($ab) ? app('ab') : $ab;
         parent::__construct();
     }
 
@@ -42,7 +51,7 @@ class InstallCommand extends Command {
      */
     public function fire()
     {
-        $connection = Config::get('ab::connection');
+        $connection = $this->ab->getConnection();
 
         // Create experiments table.
         if ( ! Schema::connection($connection)->hasTable('experiments'))
@@ -69,18 +78,18 @@ class InstallCommand extends Command {
 
         $this->info('Database schema initialized.');
 
-        $experiments = Config::get('ab::experiments');
+        $experiments = $this->ab->getExperiments();
 
         if ( ! $experiments or empty($experiments))
         {
             return $this->error('No experiments configured.');
         }
 
-        $goals = Config::get('ab::goals');
+        $goals = $this->ab->getGoals();
 
         if ( ! $goals or empty($goals))
         {
-            return $this->error('No goals configured.');
+            $this->error('No goals configured.');
         }
 
         // Populate experiments and goals.

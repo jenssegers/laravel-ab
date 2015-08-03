@@ -20,16 +20,23 @@ Add the service provider in `app/config/app.php`:
 
 Register the AB alias:
 
-    'AB'           => 'Jenssegers\AB\Facades\AB',
+    'AB' => 'Jenssegers\AB\Facades\AB',
 
 Configuration
 -------------
 
-Publish the included configuration file:
+Publish the included configuration file (Laravel 4.2 and below.)
 
-    php artisan config:publish jenssegers/ab
+    1. php artisan config:publish jenssegers/ab
+    2. Edit the `config/packages/jenssegers/ab/config.php` file.
 
-Next, edit the `config/packages/jenssegers/ab/config.php` file. The following configuration options are available:
+For Laravel 5.0 and above:
+
+    1. php artisan vendor:publish
+    2. Add the tracking middleware `Jenssegers\AB\Middleware\TrackMiddleware` to your `app\Http\Middleware\Kernel.php` `middlware` array.
+    3. Edit the `config/ab.php` file.
+
+## Options available
 
 ### Database Connection
 
