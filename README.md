@@ -1,4 +1,4 @@
-Laravel 4 A/B Testing
+Laravel 5 A/B Testing
 =====================
 
 [![Build Status](http://img.shields.io/travis/jenssegers/laravel-ab.svg)](https://travis-ci.org/jenssegers/laravel-ab) [![Coverage Status](http://img.shields.io/coveralls/jenssegers/laravel-ab.svg)](https://coveralls.io/r/jenssegers/laravel-ab)
@@ -21,15 +21,25 @@ Add the service provider in `app/config/app.php`:
 Register the AB alias:
 
     'AB'           => 'Jenssegers\AB\Facades\AB',
+    
+
+You also need to register the LaravelGettext middleware in the app/Http/Kernel.php file:
+
+    protected $middleware = [
+        // ...
+        'Jenssegers\AB\Middleware\BeforeMiddleware',
+        // ...
+    ]
+
 
 Configuration
 -------------
 
 Publish the included configuration file:
 
-    php artisan config:publish jenssegers/ab
+    php artisan vendor:publish
 
-Next, edit the `config/packages/jenssegers/ab/config.php` file. The following configuration options are available:
+Next, edit the `config/ab.php` file. The following configuration options are available:
 
 ### Database Connection
 
@@ -76,11 +86,13 @@ After you have defined your experiments and goals, you can start designing your 
         <div class="logo-big"></div>
 
     @elseif (AB::experiment('b'))
-        <h1>Brand name</h1>
+        @include('experiments.testview')
 
     @elseif (AB::experiment('c'))
         <div class="logo-greyscale"></div>
-
+    
+    @else
+        <!-- In case there aren't experiments, can show this part -->
     @endif
 
 Once the visitor is assigned to an experiment, his next clicks are automatically tracked to see if he is engaging with your website or completing certain goals. These goals are relative urls or named routes, and will be marked as completed when a visitor visits that url during an experiment.
@@ -140,3 +152,5 @@ Get the list of experiments.
 **AB::getGoals()**
 
 Get the list of goals.
+
+
