@@ -153,4 +153,7 @@ Get the list of experiments.
 
 Get the list of goals.
 
+Advanced
+--------
 
+Edited and exported to Laravel 5 by @rafelsanso
