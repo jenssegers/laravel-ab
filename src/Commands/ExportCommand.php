@@ -2,6 +2,7 @@
 
 use Jenssegers\AB\Models\Experiment;
 use Jenssegers\AB\Models\Goal;
+use Jenssegers\AB\Support\Helpers;
 
 use SplTempFileObject;
 use League\Csv\Writer;
@@ -44,7 +45,7 @@ class ExportCommand extends Command {
     public function fire()
     {
         $experiments = Experiment::active()->get();
-        $goals = array_unique(Goal::active()->orderBy('name')->lists('name'));
+        $goals = array_unique(Helpers::lists(Goal::active()->orderBy('name')->lists('name')));
 
         $columns = array_merge(['Experiment', 'Visitors', 'Engagement'], array_map('ucfirst', $goals));
 
@@ -61,7 +62,7 @@ class ExportCommand extends Command {
                 number_format($engagement, 2) . " % (" . $experiment->engagement .")",
             ];
 
-            $results = $experiment->goals()->lists('count', 'name');
+            $results = Helpers::lists($experiment->goals()->lists('count', 'name'));
 
             foreach ($goals as $column)
             {

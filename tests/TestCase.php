@@ -16,12 +16,7 @@ class TestCase extends Orchestra\Testbench\TestCase {
     {
         parent::setUp();
 
-        // Add some experiments.
-        Config::set('ab::experiments', ['a', 'b', 'c']);
-        Config::set('ab::goals', ['register', 'buy', 'contact']);
-
         // Make sure we're working in memory.
-        Config::set('ab::connection', 'sqlite');
         Config::set('database.default', 'sqlite');
         Config::set('database.connections.sqlite.database', ':memory:');
 

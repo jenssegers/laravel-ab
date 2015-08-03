@@ -10,7 +10,7 @@ class CommandTest extends TestCase {
 
     public function testInstall()
     {
-        Artisan::call('ab:install');
+        $command = Artisan::call('ab:install');
 
         $this->assertTrue(Schema::hasTable('experiments'));
         $this->assertTrue(Schema::hasTable('goals'));
@@ -18,7 +18,7 @@ class CommandTest extends TestCase {
 
     public function testFlush()
     {
-        Artisan::call('ab:install');
+        $this->install();
 
         Experiment::find('a')->update(['visitors' => 153, 'engagement' => 35]);
 
@@ -32,7 +32,7 @@ class CommandTest extends TestCase {
 
     public function testReport()
     {
-        Artisan::call('ab:install');
+        $this->install();
 
         Experiment::find('a')->update(['visitors' => 153, 'engagement' => 35]);
         Goal::create(['name'=>'foo', 'experiment'=>'a', 'count'=>42]);
@@ -49,7 +49,7 @@ class CommandTest extends TestCase {
 
     public function testExport()
     {
-        Artisan::call('ab:install');
+        $this->install();
 
         Experiment::find('a')->update(['visitors' => 153, 'engagement' => 35]);
         Goal::create(['name'=>'foo', 'experiment'=>'a', 'count'=>42]);
@@ -64,10 +64,19 @@ class CommandTest extends TestCase {
         $this->assertContains('42', $report);
 
         $output = new Symfony\Component\Console\Output\BufferedOutput;
-        Artisan::call('ab:export', ['file' => '/tmp/test.csv'], $output);
+        $file = tempnam(sys_get_temp_dir(), 'ab-export');
+        Artisan::call('ab:export', ['file' => $file], $output);
         $report = $output->fetch();
 
-        $this->assertContains('Creating /tmp/test.csv', $report);
+        $this->assertContains('Creating ' . $file, $report);
+    }
+
+    protected function install()
+    {
+        $ab = App::make('ab');
+        $ab->setExperiments(['a']);
+        $installCommand = new InstallCommand($ab);
+        $installCommand->run(new Symfony\Component\Console\Input\ArrayInput([]), new Symfony\Component\Console\Output\NullOutput);
     }
 
 }

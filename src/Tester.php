@@ -1,6 +1,5 @@
 <?php namespace Jenssegers\AB;
 
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 
@@ -18,13 +17,40 @@ class Tester {
     protected $session;
 
     /**
+     * The experiments.
+     *
+     * @var array
+     */
+    protected $experiments = [];
+
+    /**
+     * The goals.
+     *
+     * @var array
+     */
+    protected $goals = [];
+
+    /**
+     * The database connection.
+     *
+     * @var string
+     */
+    protected $connection;
+
+    /**
      * Constructor.
      *
      * @param SessionInterface $session
+     * @param array $config
      */
-    public function __construct(SessionInterface $session)
+    public function __construct(SessionInterface $session, array $config = null)
     {
         $this->session = $session;
+
+        if (!is_null($config))
+        {
+            $this->loadConfig($config);
+        }
     }
 
     /**
@@ -142,6 +168,29 @@ class Tester {
     }
 
     /**
+     * Load config settings.
+     *
+     * @param array $config
+     */
+    public function loadConfig(array $config)
+    {
+        if (isset($config['experiments']))
+        {
+            $this->setExperiments($config['experiments']);
+        }
+
+        if (isset($config['goals']))
+        {
+            $this->setGoals($config['goals']);
+        }
+
+        if (isset($config['connection']))
+        {
+            $this->setConnection($config['connection']);
+        }
+    }
+
+    /**
      * Set the current experiment for this session manually.
      *
      * @param string $experiment
@@ -164,7 +213,7 @@ class Tester {
      */
     public function getExperiments()
     {
-        return Config::get('ab::experiments', []);
+        return $this->experiments;
     }
 
     /**
@@ -174,7 +223,47 @@ class Tester {
      */
     public function getGoals()
     {
-        return Config::get('ab::goals', []);
+        return $this->goals;
+    }
+
+    /**
+     * Get connection name.
+     *
+     * @return string
+     */
+    public function getConnection()
+    {
+        return $this->connection;
+    }
+
+    /**
+     * Set the available experiments.
+     *
+     * @param array $experiments
+     */
+    public function setExperiments(array $experiments)
+    {
+        $this->experiments = $experiments;
+    }
+
+    /**
+     * Set available goals.
+     *
+     * @param array $goals
+     */
+    public function setGoals(array $goals)
+    {
+        $this->goals = $goals;
+    }
+
+    /**
+     * Set connection name.
+     *
+     * @param string $name
+     */
+    public function setConnection($name)
+    {
+        $this->connection = $name;
     }
 
     /**
