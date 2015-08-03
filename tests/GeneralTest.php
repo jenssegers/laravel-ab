@@ -34,6 +34,20 @@ class GeneralTest extends TestCase {
         $this->assertInstanceOf('Jenssegers\AB\Session\SessionInterface', $ab->getSession());
     }
 
+    public function testLoadConfig()
+    {
+        $ab = App::make('ab');
+        $ab->loadConfig([
+            'experiments' => $experiments = ['a', 'b'],
+            'goals'       => $goals = ['buy'],
+            'connection'  => $connection = 'test',
+        ]);
+
+        $this->assertEquals($experiments, $ab->getExperiments());
+        $this->assertEquals($goals, $ab->getGoals());
+        $this->assertEquals($connection, $ab->getConnection());
+    }
+
     public function testTracking()
     {
         Route::enableFilters();
