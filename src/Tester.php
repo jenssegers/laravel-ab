@@ -85,13 +85,13 @@ class Tester {
             {
                 return $experiment;
             }
-    
+
             return $experiment == $target;
         } catch (\Exception $e) {
             \Log::error('Experiments on front may be deleted');
             return false;
         }
-        
+
     }
 
     /**
@@ -170,7 +170,7 @@ class Tester {
      */
     public function getExperiments()
     {
-        return Config::get('ab::experiments', []);
+        return Config::get('ab', [])['experiments'];
     }
 
     /**
@@ -180,7 +180,7 @@ class Tester {
      */
     public function getGoals()
     {
-        return Config::get('ab::goals', []);
+        return Config::get('ab', [])['goals'];
     }
 
     /**
@@ -201,6 +201,28 @@ class Tester {
     public function setSession(SessionInterface $session)
     {
         $this->session = $session;
+    }
+
+    /**
+     * If an experiment has initialized get his string.
+     *
+     * @return string
+     */
+    public function currentExperiment()
+    {
+        // Verify that the experiments are in the database.
+        $this->checkExperiments();
+        if ($this->session->get('experiment') != '')
+        {
+            $experiment =$this->session->get('experiment');
+        }
+        else
+        {
+            $experiment = Experiment::active()->orderBy('updated_at', 'asc')->firstOrFail();
+            $experiment = $experiment->name;
+        }
+
+        return $experiment;
     }
 
     /**
@@ -247,6 +269,18 @@ class Tester {
                 Experiment::firstOrCreate(['name' => $experiment]);
             }
         }
+    }
+
+    /**
+     * Check if there are active experiments.
+     *
+     * @return string
+     */
+    public function hasExperiments()
+    {
+        $count = Experiment::count();
+
+        return $count > 1;
     }
 
 }
