@@ -1,7 +1,7 @@
-Laravel 5 A/B Testing
+Laravel 5.1 A/B Testing
 =====================
 
-[![Build Status](http://img.shields.io/travis/jenssegers/laravel-ab.svg)](https://travis-ci.org/jenssegers/laravel-ab) [![Coverage Status](http://img.shields.io/coveralls/jenssegers/laravel-ab.svg)](https://coveralls.io/r/jenssegers/laravel-ab)
+[![Build Status](http://img.shields.io/travis/rafelsanso/laravel-ab.svg)](https://travis-ci.org/rafelsanso/laravel-ab) [![Coverage Status](http://img.shields.io/coveralls/rafelsanso/laravel-ab.svg)](https://coveralls.io/r/rafelsanso/laravel-ab)
 
 A server-side A/B testing tool for Laravel, a great free alternative for services such as optimizely. Use A/B testing to figure out which content works, and which doesn't.
 
@@ -10,9 +10,14 @@ This tool allows you to experiment with different variations of your website and
 Installation
 ------------
 
-Install using composer:
+Add this repository to composer.json:
 
-    composer require jenssegers/ab
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/rafelsanso/laravel-ab"
+        }
+    ],
 
 Add the service provider in `app/config/app.php`:
 
@@ -21,25 +26,15 @@ Add the service provider in `app/config/app.php`:
 Register the AB alias:
 
     'AB'           => 'Jenssegers\AB\Facades\AB',
-    
-
-You also need to register the LaravelGettext middleware in the app/Http/Kernel.php file:
-
-    protected $middleware = [
-        // ...
-        'Jenssegers\AB\Middleware\BeforeMiddleware',
-        // ...
-    ]
-
 
 Configuration
 -------------
 
 Publish the included configuration file:
 
-    php artisan vendor:publish
+    php artisan config:publish jenssegers/ab
 
-Next, edit the `config/ab.php` file. The following configuration options are available:
+Next, edit the `config/packages/jenssegers/ab/config.php` file. The following configuration options are available:
 
 ### Database Connection
 
@@ -86,13 +81,13 @@ After you have defined your experiments and goals, you can start designing your 
         <div class="logo-big"></div>
 
     @elseif (AB::experiment('b'))
-        @include('experiments.testview')
+        <h1>Brand name</h1>
 
     @elseif (AB::experiment('c'))
         <div class="logo-greyscale"></div>
-    
     @else
-        <!-- In case there aren't experiments, can show this part -->
+        // Original or default value
+        // This maybe appears when experiment has inactive
     @endif
 
 Once the visitor is assigned to an experiment, his next clicks are automatically tracked to see if he is engaging with your website or completing certain goals. These goals are relative urls or named routes, and will be marked as completed when a visitor visits that url during an experiment.
@@ -106,6 +101,12 @@ If you want to add new experiments, it may be best to clear the existing A/B tes
     php artisan ab:flush
 
 If you don't flush your existing experimental data, all new visitors will see the new experiment first until it catches up with the pageviews of the old experiments.
+
+End Experiment
+-----
+
+If you want to cancel an experiment without access to server and use command AB:flush, you can drop the experiment from the database. Remember: when you drop the experiments table or flush new experiment, you will lose the report.
+
 
 Reports
 -------
@@ -153,7 +154,17 @@ Get the list of experiments.
 
 Get the list of goals.
 
+**AB::hasExperiments()**
+
+Return true if has more than 1 experiment into table "experiments".
+
+**AB::currentExperiment()**
+
+Return the name of the current session experiment.
+
+
 Advanced
 --------
 
-Edited and exported to Laravel 5 by @rafelsanso
+Edited and exported to Laravel 5.1 by @rafelsanso
+
