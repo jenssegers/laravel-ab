@@ -102,11 +102,6 @@ If you want to add new experiments, it may be best to clear the existing A/B tes
 
 If you don't flush your existing experimental data, all new visitors will see the new experiment first until it catches up with the pageviews of the old experiments.
 
-End Experiment
------
-
-If you want to cancel an experiment without access to server and use command AB:flush, you can drop the experiment from the database. Remember: when you drop the experiments table or flush new experiment, you will lose the report.
-
 
 Reports
 -------
