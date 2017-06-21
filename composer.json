@@ -24,5 +24,15 @@
         "psr-4": {
             "Jenssegers\\AB\\": "src/"
         }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Jenssegers\\AB\\TesterServiceProvider"
+            ],
+            "aliases": {
+                "AB": "Jenssegers\\AB\\Facades\\AB"
+            }
+        }
     }
 }
