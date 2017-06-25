@@ -1,7 +1,7 @@
-Laravel A/B Testing
-===================
+Laravel 5.1 A/B Testing
+=====================
 
-[![Build Status](http://img.shields.io/travis/jenssegers/laravel-ab.svg)](https://travis-ci.org/jenssegers/laravel-ab) [![Coverage Status](http://img.shields.io/coveralls/jenssegers/laravel-ab.svg)](https://coveralls.io/r/jenssegers/laravel-ab)
+[![Build Status](http://img.shields.io/travis/rafelsanso/laravel-ab.svg)](https://travis-ci.org/rafelsanso/laravel-ab) [![Coverage Status](http://img.shields.io/coveralls/rafelsanso/laravel-ab.svg)](https://coveralls.io/r/rafelsanso/laravel-ab)
 
 A server-side A/B testing tool for Laravel, a great free alternative for services such as optimizely. Use A/B testing to figure out which content works, and which doesn't.
 
@@ -10,9 +10,14 @@ This tool allows you to experiment with different variations of your website and
 Installation
 ------------
 
-Install using composer:
+Add this repository to composer.json:
 
-    composer require jenssegers/ab
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/rafelsanso/laravel-ab"
+        }
+    ],
 
 Add the service provider in `app/config/app.php`:
 
@@ -80,7 +85,9 @@ After you have defined your experiments and goals, you can start designing your 
 
     @elseif (AB::experiment('c'))
         <div class="logo-greyscale"></div>
-
+    @else
+        // Original or default value
+        // This maybe appears when experiment has inactive
     @endif
 
 Once the visitor is assigned to an experiment, his next clicks are automatically tracked to see if he is engaging with your website or completing certain goals. These goals are relative urls or named routes, and will be marked as completed when a visitor visits that url during an experiment.
@@ -94,6 +101,7 @@ If you want to add new experiments, it may be best to clear the existing A/B tes
     php artisan ab:flush
 
 If you don't flush your existing experimental data, all new visitors will see the new experiment first until it catches up with the pageviews of the old experiments.
+
 
 Reports
 -------
@@ -140,3 +148,18 @@ Get the list of experiments.
 **AB::getGoals()**
 
 Get the list of goals.
+
+**AB::hasExperiments()**
+
+Return true if has more than 1 experiment into table "experiments".
+
+**AB::currentExperiment()**
+
+Return the name of the current session experiment.
+
+
+Advanced
+--------
+
+Edited and exported to Laravel 5.1 by @rafelsanso
+

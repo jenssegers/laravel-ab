@@ -22,13 +22,29 @@ class TesterServiceProvider extends ServiceProvider {
     public function boot()
     {
         // Fix for PSR-4
-        $this->package('jenssegers/ab', 'ab', realpath(__DIR__));
+        //$this->package('jenssegers/ab', 'ab', realpath(__DIR__));
+        $this->loadViewsFrom(realpath(__DIR__), 'ab');
+        
+        $this->publishes([
+            realpath(__DIR__).'/config/config.php' => config_path('ab.php'),
+        ]);
 
         // Start the A/B tracking when routing starts.
-        $this->app->before(function($request)
+        /*$this->app->before(function($request)
         {
             $this->app['ab']->track($request);
-        });
+        });*/
+    }
+    
+    /**
+     * Register the application events.
+     *
+     * @return void
+     */
+    public static function setTrack($request) {
+        $service = new TesterServiceProvider;
+        $service->app['ab']->track($request);
+        //return true;
     }
 
     /**

@@ -7,8 +7,6 @@ class Goal extends Eloquent {
 
     protected $primaryKey = 'name';
 
-    public $timestamps = false;
-
     protected $fillable = ['name', 'experiment', 'count'];
 
     public function __construct(array $attributes = array())

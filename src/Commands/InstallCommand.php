@@ -49,9 +49,11 @@ class InstallCommand extends Command {
         {
             Schema::connection($connection)->create('experiments', function($table)
             {
+                $table->increments('id');
                 $table->string('name');
                 $table->integer('visitors')->unsigned()->default(0);
                 $table->integer('engagement')->unsigned()->default(0);
+                $table->timestamps();
             });
         }
 
@@ -60,23 +62,24 @@ class InstallCommand extends Command {
         {
             Schema::connection($connection)->create('goals', function($table)
             {
+                $table->increments('id');
                 $table->string('name');
                 $table->string('experiment');
                 $table->integer('count')->unsigned()->default(0);
-                $table->primary(array('name', 'experiment'));
+                $table->timestamps();
             });
         }
 
         $this->info('Database schema initialized.');
 
-        $experiments = Config::get('ab::experiments');
+        $experiments = Config::get('ab')['experiments'];
 
         if ( ! $experiments or empty($experiments))
         {
             return $this->error('No experiments configured.');
         }
 
-        $goals = Config::get('ab::goals');
+        $goals = Config::get('ab')['goals'];
 
         if ( ! $goals or empty($goals))
         {
